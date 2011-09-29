@@ -4,6 +4,8 @@
         hiccup.page-helpers
         hiccup.form-helpers))
 
+
+; Utils -----------------------------------------------------------------------
 (defn include-less [href]
   [:link {:rel "stylesheet/less" :type "text/css" :href href}])
 
@@ -12,6 +14,7 @@
         (fieldfn field-name)))
 
 
+; Layout ----------------------------------------------------------------------
 (defpartial base [& content]
             (html5
               [:head
@@ -36,6 +39,8 @@
               [:h2.sixteen.columns title]
               content))
 
+
+; Pages -----------------------------------------------------------------------
 (defpartial home []
             (base
               [:div.six.columns
@@ -60,6 +65,7 @@
                      (submit-button "Search")]]
                    [:div.eight.columns
                     [:p "You're not currently waiting for any shows."]]))
+
 
 (defpartial result [r]
             [:li
