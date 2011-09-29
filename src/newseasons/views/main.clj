@@ -31,11 +31,16 @@
 
 
 ; Home ------------------------------------------------------------------------
+(defn check-login [{:keys [email password]}]
+  true)
+
 (defpage [:get "/"] []
          (t/home))
 
-(defpage [:post "/"] []
-         (t/home))
+(defpage [:post "/"] {:as login}
+         (if (check-login login)
+           (resp/redirect (str "/" (:email login)))
+           (t/home)))
 
 
 ; User ------------------------------------------------------------------------
