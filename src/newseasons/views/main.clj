@@ -108,6 +108,24 @@
            (resp/redirect "/")))
 
 
+; Change Password -------------------------------------------------------------
+(defpage [:get "/password"] []
+         (login-required
+           (t/password)))
+
+
+(defn- pass-valid? [password]
+  (not (empty? password)))
+
+(defpage [:post "/password"] {:keys [password]}
+         (login-required
+           (if-not (pass-valid? password)
+             (render "/password" password)
+             (do
+               (users/user-set-pass! (sess/get :email) password)
+               (resp/redirect "/")))))
+
+
 ; Log Out ---------------------------------------------------------------------
 (defpage [:post "/logout"] []
          (sess/remove! :email)

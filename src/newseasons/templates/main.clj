@@ -40,10 +40,13 @@
 
 (defpartial inner [title & content]
             (base
-              
-              [:h2.sixteen.columns.page-title [:div.logout
-               (form-to [:post "/logout"]
-                        (submit-button "Log Out"))]title]
+              [:h2.sixteen.columns.page-title
+               [:div.profile
+                (form-to [:post "/logout"]
+                         (submit-button "Log Out"))
+                (form-to [:get "/password"]
+                         (submit-button "Change Password"))]
+               title]
               content))
 
 
@@ -85,3 +88,11 @@
             (inner (str "Search results for &ldquo;" query "&rdquo;")
                    [:ul.sixteen.columns
                     (map result results)]))
+
+
+(defpartial password []
+            (inner "Change Your Password"
+                   [:section.sixteen.columns
+                    (form-to [:post ""]
+                             (field password-field "password" "New Password")
+                             (submit-button "Change Password"))]))
