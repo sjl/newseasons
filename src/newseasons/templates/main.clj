@@ -41,7 +41,9 @@
 (defpartial inner [title & content]
             (base
               [:h2.sixteen.columns title]
-              content))
+              content
+              (form-to [:post "/logout"]
+                       (submit-button "Log Out"))))
 
 
 ; Pages -----------------------------------------------------------------------
@@ -51,7 +53,7 @@
                [:form {:action "" :method "POST"}
                 (field text-field "email" "Email Address")
                 (field password-field "password" "Password")
-                (submit-button "Log in or Create Account")]]
+                (submit-button "Log In or Create Account")]]
               [:div.five.columns
                [:p "New Seasons will notify you when your favorite TV "
                    "shows have new seasons on iTunes.  That's it."]]

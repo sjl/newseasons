@@ -1,14 +1,27 @@
 (ns newseasons.views.main
-  (:require [newseasons.templates.main :as t])
   (:use noir.core)
   (:require [noir.response :as resp])
   (:require [noir.session :as sess])
+  (:require [noir.util.crypt :as crypt])
   (:require [clj-http.client :as client])
-  (:use [cheshire.core :only (parse-string)]))
+  (:use [cheshire.core :only (parse-string)])
+  (:require [newseasons.templates.main :as t])
+  (:require [newseasons.models.users :as users]))
 
 
+; Utils -----------------------------------------------------------------------
 (def email-regex #"[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
+(def none-are (comp not some))
+(defn all-are [pred coll]
+  (= (count coll)
+     (count (filter pred coll))))
 
+(defn flash! [message]
+  (sess/flash-put! message)
+  nil)
+
+
+; iTunes ----------------------------------------------------------------------
 (defn itunes-search [params]
   ((parse-string (:body (client/get "http://itunes.apple.com/search"
                                     {:query-params params})))
@@ -31,18 +44,31 @@
 
 
 ; Authentication --------------------------------------------------------------
+(defn force-login []
+  (flash! "Please log in to view that page!")
+  (resp/redirect "/"))
+
 (defmacro login-required [& body]
   `(if-not (sess/get :email)
-     (do
-       (sess/flash-put! "Please log in to access that page!")
-       (resp/redirect "/")) 
-     ~@body))
+     (force-login)
+     (do ~@body)))
+
+(defn check-login [{:keys [email password]}]
+  (if-not (none-are empty? [email password])
+    (flash! "Both fields are required.  This really shouldn't be difficult.")
+    (if-not (re-find email-regex email)
+      (flash! "That's not an email address!")
+      (if-let [user (users/user-get email)]
+        (if (crypt/compare password (:pass user))
+          user
+          (flash! "Invalid login!"))
+        (do
+          (users/user-set-email! email email)
+          (users/user-set-pass! email password)
+          (users/user-get email))))))
 
 
 ; Home ------------------------------------------------------------------------
-(defn check-login [{:keys [email password]}]
-  true)
-
 (defpage [:get "/"] []
          (if-let [email (sess/get :email)]
            (resp/redirect (str "/" email))
@@ -51,13 +77,15 @@
 (defpage [:post "/"] {:as login}
          (if (check-login login)
            (resp/redirect (str "/" (:email login)))
-           (t/home)))
+           (render "/" login)))
 
 
 ; User ------------------------------------------------------------------------
 (defpage [:get ["/:email" :email email-regex]] {:keys [email]}
          (login-required
-           (t/user email)))
+           (if (not= email (sess/get email))
+             (force-login)
+             (t/user email))))
 
 
 ; Search ----------------------------------------------------------------------
@@ -72,8 +100,12 @@
 
 ; Add -------------------------------------------------------------------------
 (defpage [:post "/add"] {:as show}
-         (sess/flash-put! "Added a show to your list.")
+         (login-required
+           (flash! "Added a show to your list.")
+           (resp/redirect "/")))
+
+
+; Log Out ---------------------------------------------------------------------
+(defpage [:post "/logout"] []
+         (sess/remove! :email)
          (resp/redirect "/"))
-
-
-
