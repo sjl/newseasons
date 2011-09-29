@@ -8,6 +8,27 @@
 
 (def email-regex #"[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
 
+(defn itunes-search [params]
+  ((parse-string (:body (client/get "http://itunes.apple.com/search"
+                                    {:query-params params})))
+     "results"))
+
+(defn itunes-search-show [query]
+  (itunes-search {"term" query
+                  "media" "tvShow"
+                  "entity" "tvSeason"
+                  "attribute" "showTerm"}))
+
+
+(defn itunes-lookup [field id]
+  ((parse-string (:body (client/get "http://itunes.apple.com/search"
+                                    {:query-params {field id}})))
+     "results"))
+
+(defn itunes-lookup-artist [id]
+  (itunes-lookup "id" id))
+
+
 ; Home ------------------------------------------------------------------------
 (defpage [:get "/"] []
          (t/home))
@@ -22,17 +43,10 @@
 
 
 ; Search ----------------------------------------------------------------------
-(defn search-itunes [query]
-  ((parse-string (:body (client/get "http://itunes.apple.com/search"
-                                    {:query-params {"term" query
-                                                    "media" "tvShow"
-                                                    "entity" "tvSeason"
-                                                    "attribute" "showTerm"}})))
-     "results"))
 
 (defpage [:get "/search"] {:keys [query]}
          ; TODO: Images.
-         (let [results (search-itunes query)
+         (let [results (itunes-search-show query)
                artists (distinct (map #(select-keys % ["artistName" "artistId" "artistViewUrl"])
                                       results))]
            (t/search query artists)))
