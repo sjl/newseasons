@@ -35,7 +35,9 @@
                 [:footer.sixteen.columns
                  [:p
                   "Made by "
-                  (link-to "http://stevelosh.com" "Steve Losh")
+                  (link-to "http://stevelosh.com/" "Steve Losh")
+                  " with "
+                  (link-to "http://webnoir.org/" "Noir")
                   "."]]]]))
 
 (defpartial inner [title & content]
@@ -82,11 +84,11 @@
              [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
              (form-to [:post "/add"]
                       [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
-                      (submit-button "Watch for this Show"))])
+                      (submit-button "Add Show to List"))])
 
 (defpartial search [query results]
             (inner (str "Search results for &ldquo;" query "&rdquo;")
-                   [:ul.sixteen.columns
+                   [:ul.sixteen.columns.search-results
                     (map result results)]))
 
 
