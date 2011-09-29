@@ -30,12 +30,23 @@
   (first (itunes-lookup "id" id)))
 
 
+; Authentication --------------------------------------------------------------
+(defmacro login-required [& body]
+  `(if-not (sess/get :email)
+     (do
+       (sess/flash-put! "Please log in to access that page!")
+       (resp/redirect "/")) 
+     ~@body))
+
+
 ; Home ------------------------------------------------------------------------
 (defn check-login [{:keys [email password]}]
   true)
 
 (defpage [:get "/"] []
-         (t/home))
+         (if-let [email (sess/get :email)]
+           (resp/redirect (str "/" email))
+           (t/home)))
 
 (defpage [:post "/"] {:as login}
          (if (check-login login)
@@ -45,19 +56,24 @@
 
 ; User ------------------------------------------------------------------------
 (defpage [:get ["/:email" :email email-regex]] {:keys [email]}
-         (t/user email))
+         (login-required
+           (t/user email)))
 
 
 ; Search ----------------------------------------------------------------------
 (defpage [:get "/search"] {:keys [query]}
-         ; TODO: Images.
-         (let [results (itunes-search-show query)
-               artists (distinct (map #(select-keys % ["artistName" "artistId" "artistViewUrl"])
-                                      results))]
-           (t/search query artists)))
+         (login-required
+           ; TODO: Images.
+           (let [results (itunes-search-show query)
+                 artists (distinct (map #(select-keys % ["artistName" "artistId" "artistViewUrl"])
+                                        results))]
+             (t/search query artists))))
 
 
 ; Add -------------------------------------------------------------------------
 (defpage [:post "/add"] {:as show}
          (sess/flash-put! "Added a show to your list.")
          (resp/redirect "/"))
+
+
+
