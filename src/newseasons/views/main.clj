@@ -26,7 +26,7 @@
      "results"))
 
 (defn itunes-lookup-artist [id]
-  (itunes-lookup "id" id))
+  (first (itunes-lookup "id" id)))
 
 
 ; Home ------------------------------------------------------------------------
