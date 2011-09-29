@@ -40,10 +40,11 @@
 
 (defpartial inner [title & content]
             (base
-              [:h2.sixteen.columns title]
-              content
-              (form-to [:post "/logout"]
-                       (submit-button "Log Out"))))
+              
+              [:h2.sixteen.columns.page-title [:div.logout
+               (form-to [:post "/logout"]
+                        (submit-button "Log Out"))]title]
+              content))
 
 
 ; Pages -----------------------------------------------------------------------
@@ -77,7 +78,7 @@
             [:li
              [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
              (form-to [:post "/add"]
-                      [:input {:type "hidden" :name "artist-id" :value (r "artistId")}] 
+                      [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
                       (submit-button "Watch for this Show"))])
 
 (defpartial search [query results]
