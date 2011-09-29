@@ -1,4 +1,5 @@
 (ns newseasons.templates.main
+  (:require [noir.session :as sess])
   (:use noir.core
         hiccup.core
         hiccup.page-helpers
@@ -27,6 +28,9 @@
               [:body
                [:div.container.clearfix
                 [:header.sixteen.columns [:h1 (link-to "/" "New Seasons")]]
+                (when-let [message (sess/flash-get)]
+                  [:section.message.sixteen.columns
+                   [:p message]])
                 content
                 [:footer.sixteen.columns
                  [:p

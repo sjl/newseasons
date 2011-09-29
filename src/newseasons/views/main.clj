@@ -2,6 +2,7 @@
   (:require [newseasons.templates.main :as t])
   (:use noir.core)
   (:require [noir.response :as resp])
+  (:require [noir.session :as sess])
   (:require [clj-http.client :as client])
   (:use [cheshire.core :only (parse-string)]))
 
@@ -43,7 +44,6 @@
 
 
 ; Search ----------------------------------------------------------------------
-
 (defpage [:get "/search"] {:keys [query]}
          ; TODO: Images.
          (let [results (itunes-search-show query)
@@ -54,4 +54,5 @@
 
 ; Add -------------------------------------------------------------------------
 (defpage [:post "/add"] {:as show}
+         (sess/flash-put! "Added a show to your list.")
          (resp/redirect "/"))
