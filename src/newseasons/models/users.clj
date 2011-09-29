@@ -23,9 +23,9 @@
   (str "users:" email ":shows"))
 
 (defn user-get [email]
-  (let [user @(r [:hgetall (user-key email)])]
+  (let [user (apply hash-map @(r [:hgetall (user-key email)]))]
     (when (not (empty? user))
-      (merge user
+      (merge {:email (user "email") :pass (user "pass")}
              {:shows @(r [:smembers (user-key-shows email)])}))))
 
 (defn user-set-email! [email new-email]

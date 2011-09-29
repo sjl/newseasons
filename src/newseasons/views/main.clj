@@ -60,11 +60,14 @@
       (flash! "That's not an email address!")
       (if-let [user (users/user-get email)]
         (if (crypt/compare password (:pass user))
-          user
+          (do
+            (sess/put! :email email)
+            user)
           (flash! "Invalid login!"))
         (do
           (users/user-set-email! email email)
           (users/user-set-pass! email password)
+          (sess/put! :email email)
           (users/user-get email))))))
 
 
@@ -83,7 +86,7 @@
 ; User ------------------------------------------------------------------------
 (defpage [:get ["/:email" :email email-regex]] {:keys [email]}
          (login-required
-           (if (not= email (sess/get email))
+           (if (not= email (sess/get :email))
              (force-login)
              (t/user email))))
 
