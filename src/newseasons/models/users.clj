@@ -1,4 +1,5 @@
 (ns newseasons.models.users
+  (:use newseasons.models.keys)
   (:require [noir.util.crypt :as crypt])
   (:use [aleph.redis :only (redis-client)]))
 
@@ -13,29 +14,29 @@
 ;     email: the email address for ease of use
 ;     pass: the user's hashed password
 ; }
-; user:<email address>:shows = #(show-id, ...)
+; user:<email address>:shows = #{show-id, ...}
+;
+; The show watching data is also denormalized based on show.
+;
+; shows:<id>:watchers - #{email, ...}
 
 ; Code ------------------------------------------------------------------------
-(defn- user-key [email]
-  (str "users:" email))
-
-(defn- user-key-shows [email]
-  (str "users:" email ":shows"))
-
 (defn user-get [email]
-  (let [user (apply hash-map @(r [:hgetall (user-key email)]))]
+  (let [user (apply hash-map @(r [:hgetall (key-user email)]))]
     (when (not (empty? user))
       (merge {:email (user "email") :pass (user "pass")}
-             {:shows @(r [:smembers (user-key-shows email)])}))))
+             {:shows @(r [:smembers (key-user-shows email)])}))))
 
 (defn user-set-email! [email new-email]
-  @(r [:hset (user-key email) "email" new-email]))
+  @(r [:hset (key-user email) "email" new-email]))
 
 (defn user-set-pass! [email new-pass]
-  @(r [:hset (user-key email) "pass" (crypt/encrypt new-pass)]))
+  @(r [:hset (key-user email) "pass" (crypt/encrypt new-pass)]))
 
 (defn user-add-show! [email show-id]
-  @(r [:sadd (user-key-shows email) show-id]))
+  @(r [:sadd (key-user-shows email) show-id])
+  @(r [:sadd (key-show-watchers show-id) email]))
 
 (defn user-rem-show! [email show-id]
-  @(r [:srem (user-key-shows email) show-id]))
+  @(r [:srem (key-user-shows email) show-id])
+  @(r [:srem (key-show-watchers show-id) email]))

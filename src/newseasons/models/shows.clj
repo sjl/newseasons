@@ -1,4 +1,5 @@
 (ns newseasons.models.shows
+  (:use newseasons.models.keys)
   (:use [aleph.redis :only (redis-client)]))
 
 
@@ -15,19 +16,16 @@
 ; }
 
 ; Code ------------------------------------------------------------------------
-(defn- show-key [id]
-  (str "shows:" id))
-
 
 (defn show-get [id]
-  (apply hash-map @(r [:hgetall (show-key id)])))
+  (apply hash-map @(r [:hgetall (key-show id)])))
 
 (defn show-set-title! [id new-title]
-  @(r [:hset (show-key id) "title" new-title]))
+  @(r [:hset (key-show id) "title" new-title]))
 
 (defn show-set-image! [id new-image]
-  @(r [:hset (show-key id) "image" new-image]))
+  @(r [:hset (key-show id) "image" new-image]))
 
 (defn show-set-url! [id new-url]
-  @(r [:hset (show-key id) "url" new-url]))
+  @(r [:hset (key-show id) "url" new-url]))
 
