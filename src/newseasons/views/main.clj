@@ -6,6 +6,7 @@
   (:require [clj-http.client :as client])
   (:use [cheshire.core :only (parse-string)])
   (:require [newseasons.templates.main :as t])
+  (:require [newseasons.models.shows :as shows])
   (:require [newseasons.models.users :as users]))
 
 
@@ -19,6 +20,34 @@
 (defn flash! [message]
   (sess/flash-put! message)
   nil)
+
+
+; Utils -----------------------------------------------------------------------
+(defn unique-by
+  "Turn a sequence of maps into a new sequence with duplicated removed, with
+  uniqueness determined by the given keys.
+  
+  Ex:
+
+      (def a {:foo 1 :bar 1 :baz 1})
+      (def b {:foo 1 :bar 1 :baz 2})
+      (def c {:foo 1 :bar 2 :baz 3})
+
+      (unique-by [a b c] :foo)
+      ;=> [c]
+      (unique-by [a b c] :foo :bar)
+      ;=> [b c]
+      (unique-by [a b c] :baz)
+      ;=> [a b c]
+  "
+  [coll & ks]
+  (vals (reduce merge {} (map #(vector (select-keys % ks) %) coll))))
+
+(defn unique-shows [seasons]
+  (unique-by seasons "artistId"))
+
+(defn sort-maps-by [coll k]
+  (sort #(compare (%1 k) (%2 k)) coll))
 
 
 ; iTunes ----------------------------------------------------------------------
@@ -92,13 +121,21 @@
 
 
 ; Search ----------------------------------------------------------------------
+(defn store-show [show]
+  (let [id (show "artistId")]
+    (shows/show-set-title! id (show "artistName"))
+    (shows/show-set-image! id (show "artworkUrl100"))
+    (shows/show-set-url! id (show "artistViewUrl"))))
+
+(defn store-shows [seasons]
+  (dorun (map store-show seasons)))
+
+
 (defpage [:get "/search"] {:keys [query]}
          (login-required
-           ; TODO: Images.
-           (let [results (itunes-search-show query)
-                 artists (distinct (map #(select-keys % ["artistName" "artistId" "artistViewUrl"])
-                                        results))]
-             (t/search query artists))))
+           (let [results (unique-shows (itunes-search-show query))]
+             (store-shows (sort-maps-by results "releaseDate"))
+             (t/search query results))))
 
 
 ; Add -------------------------------------------------------------------------

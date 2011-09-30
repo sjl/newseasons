@@ -80,7 +80,8 @@
 
 
 (defpartial result [r]
-            [:li
+            [:li.show.group
+             [:img {:src (r "artworkUrl100")}]
              [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
              (form-to [:post "/add"]
                       [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]

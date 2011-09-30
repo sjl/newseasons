@@ -17,7 +17,7 @@ class ubuntu {
   class { "leiningen": }
   class { "environ": }
 
-  $niceties = ["htop", "dtach", "sudo", "vim", "curl"]
+  $niceties = ["htop", "dtach", "sudo", "vim", "rlwrap"]
   package { $niceties: ensure => "installed" }
 }
 
