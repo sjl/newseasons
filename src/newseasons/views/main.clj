@@ -26,7 +26,7 @@
 (defn unique-by
   "Turn a sequence of maps into a new sequence with duplicated removed, with
   uniqueness determined by the given keys.
-  
+
   Ex:
 
       (def a {:foo 1 :bar 1 :baz 1})
@@ -139,8 +139,9 @@
 
 
 ; Add -------------------------------------------------------------------------
-(defpage [:post "/add"] {:as show}
+(defpage [:post "/add"] {:keys [artist-id]}
          (login-required
+           (users/user-add-show! (sess/get :email) artist-id)
            (flash! "Added a show to your list.")
            (resp/redirect "/")))
 
