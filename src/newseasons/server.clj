@@ -1,4 +1,5 @@
 (ns newseasons.server
+  (:use [newseasons.middleware.session.redis :only (redis-store)])
   (:require [noir.server :as server]))
 
 (server/load-views "src/newseasons/views/")
@@ -7,5 +8,6 @@
   (let [mode (keyword (or (first m) :dev))
         port (Integer. (get (System/getenv) "PORT" "8000"))]
     (server/start port {:mode mode
-                        :ns 'newseasons})))
+                        :ns 'newseasons
+                        :session-store (redis-store "localhost" "devpass")})))
 

@@ -117,12 +117,14 @@
          (login-required
            (if (not= email (sess/get :email))
              (force-login)
-             (t/user email))))
+             (let [user (users/user-get email)]
+               (t/user user)))))
 
 
 ; Search ----------------------------------------------------------------------
 (defn store-show [show]
   (let [id (show "artistId")]
+    (shows/show-set-id! id id)
     (shows/show-set-title! id (show "artistName"))
     (shows/show-set-image! id (show "artworkUrl100"))
     (shows/show-set-url! id (show "artistViewUrl"))))
@@ -143,6 +145,14 @@
          (login-required
            (users/user-add-show! (sess/get :email) artist-id)
            (flash! "Added a show to your list.")
+           (resp/redirect "/")))
+
+
+; Remove ----------------------------------------------------------------------
+(defpage [:post "/rem"] {:keys [artist-id]}
+         (login-required
+           (users/user-rem-show! (sess/get :email) artist-id)
+           (flash! "Removed a show from your list.")
            (resp/redirect "/")))
 
 

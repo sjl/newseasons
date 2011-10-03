@@ -14,6 +14,12 @@
   (list [:label {:for (str "id_" field-name)} label]
         (fieldfn field-name)))
 
+(defn pluralize
+  ([coll] (pluralize coll "s"))
+  ([coll plural-suffix] (if (= 1 (count coll))
+                         ""
+                         plural-suffix)))
+
 
 ; Layout ----------------------------------------------------------------------
 (defpartial base [& content]
@@ -67,8 +73,17 @@
                [:p "New Seasons will notify you when your favorite TV "
                    "shows have new seasons on iTunes.  That's it."]]))
 
-(defpartial user [email]
-            (inner (str "Hello, " email)
+
+(defpartial user-show [show]
+            [:li.show.group
+             [:img {:src (show :image)}]
+             [:h3 (link-to (show :url) (show :title))]
+             (form-to [:post "/rem"]
+                      [:input {:type "hidden" :name "artist-id" :value (show :id)}]
+                      (submit-button "Remove"))])
+
+(defpartial user [user]
+            (inner (str "Hello, " (:email user))
                    [:div.eight.columns
                     [:form {:action "/search"}
                      (field text-field
@@ -76,7 +91,17 @@
                             "Which show do you want to keep track of?")
                      (submit-button "Search")]]
                    [:div.eight.columns
-                    [:p "You're not currently waiting for any shows."]]))
+                    (let [shows (:shows user)]
+                      (if (empty? shows)
+                        [:p "You're not currently watching any shows."]
+                        (list
+                          [:p
+                           "You're watching "
+                           (count shows)
+                           " show"
+                           (pluralize shows)
+                           "."]
+                          [:ul (map user-show shows)])))]))
 
 
 (defpartial result [r]

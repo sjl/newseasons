@@ -10,6 +10,7 @@
 ; Shows are stored as hashes.
 ;
 ; shows:<iTunes artist ID> = {
+;     id: show id
 ;     title: show tile
 ;     image: url to show's image
 ;     url: url to view the show on iTunes
@@ -18,7 +19,15 @@
 ; Code ------------------------------------------------------------------------
 
 (defn show-get [id]
-  (apply hash-map @(r [:hgetall (key-show id)])))
+  (let [show (apply hash-map @(r [:hgetall (key-show id)]))]
+    (when (not (empty? show))
+      {:id (show "id")
+       :title (show "title")
+       :image (show "image")
+       :url (show "url")})))
+
+(defn show-set-id! [id new-id]
+  @(r [:hset (key-show id) "id" new-id]))
 
 (defn show-set-title! [id new-title]
   @(r [:hset (key-show id) "title" new-title]))
