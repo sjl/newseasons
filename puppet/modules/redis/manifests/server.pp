@@ -120,7 +120,7 @@ class redis::server($ensure=present,
       default => undef,
     },
     require => $ensure ? {
-      'present' => [User["redis"], File["/etc/init.d/redis-server"]],
+      'present' => [File[$redis_log], User["redis"], File["/etc/init.d/redis-server"]],
       default => undef,
     },
     before => $ensure ? {

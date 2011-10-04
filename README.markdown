@@ -28,7 +28,6 @@ Spin up a VM, SSH in, and set up the environment:
     cd /vagrant
 
     cp src/newseasons/settings-vagrant.clj src/newseasons/settings.clj
-    lein plugin install lein-noir 1.2.0
     lein deps
 
 Run the web server (while SSH'ed in):
