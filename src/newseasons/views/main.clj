@@ -12,7 +12,6 @@
 
 ; Utils -----------------------------------------------------------------------
 (def email-regex #"[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
-(def none-are (comp not some))
 (defn all-are [pred coll]
   (= (count coll)
      (count (filter pred coll))))
@@ -57,7 +56,7 @@
      (do ~@body)))
 
 (defn check-login [{:keys [email password]}]
-  (if-not (none-are empty? [email password])
+  (if (some empty? [email password])
     (flash! "Both fields are required.  This really shouldn't be difficult.")
     (if-not (re-find email-regex email)
       (flash! "That's not an email address!")
