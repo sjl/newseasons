@@ -1,11 +1,10 @@
 (ns newseasons.views.main
   (:use noir.core)
   (:use newseasons.utils)
+  (:use newseasons.itunes)
   (:require [noir.response :as resp])
   (:require [noir.session :as sess])
   (:require [noir.util.crypt :as crypt])
-  (:require [clj-http.client :as client])
-  (:use [cheshire.core :only (parse-string)])
   (:require [newseasons.templates.main :as t])
   (:require [newseasons.models.shows :as shows])
   (:require [newseasons.models.users :as users]))
@@ -46,28 +45,6 @@
 
 (defn unique-shows [seasons]
   (unique-by (sort-maps-by seasons "releaseDate") "artistId"))
-
-; iTunes ----------------------------------------------------------------------
-(defn itunes-search [params]
-  ((parse-string (:body (client/get "http://itunes.apple.com/search"
-                                    {:query-params params})))
-     "results"))
-
-(defn itunes-search-show [query]
-  (itunes-search {"term" query
-                  "media" "tvShow"
-                  "entity" "tvSeason"
-                  "attribute" "showTerm"}))
-
-
-(defn itunes-lookup [field id]
-  ((parse-string (:body (client/get "http://itunes.apple.com/search"
-                                    {:query-params {field id}})))
-     "results"))
-
-(defn itunes-lookup-artist [id]
-  (first (itunes-lookup "id" id)))
-
 
 ; Authentication --------------------------------------------------------------
 (defn force-login []
