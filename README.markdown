@@ -24,7 +24,7 @@ Spin up a VM, SSH in, and set up the environment:
 
     vagrant up
 
-    ssh vagrant
+    vagrant ssh
     cd /vagrant
 
     cp src/newseasons/settings-vagrant.clj src/newseasons/settings.clj
