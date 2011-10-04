@@ -6,8 +6,8 @@
 (defn- refresh-show [id]
   (println "  refreshing" id)
   (let [show (itunes/itunes-lookup-seasons id)]
-    (println show)
-    (println "    ->" (show "artistName"))
+    (when show
+      (println "    ->" (show "artistName")))
     (Thread/sleep 5000)))
 
 (defn- refresh []
@@ -18,5 +18,5 @@
 
 (defn main [& args]
   (println "Starting Refresh Loop!")
-  (println)
+  (println "----------------------")
   (dorun (repeatedly refresh)))

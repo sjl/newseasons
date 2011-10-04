@@ -7,5 +7,6 @@
                            [cheshire "2.0.2"]
                            [clj-http "0.2.1"]
                            [aleph "0.2.0-beta2"]]
-            :main newseasons.server)
+            :main newseasons.server
+            :run-aliases {:refresh newseasons.loops.refresh/main})
 
