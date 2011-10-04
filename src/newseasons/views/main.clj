@@ -55,6 +55,13 @@
      (force-login)
      (do ~@body)))
 
+
+(defn create-user [email password]
+  (users/user-set-email! email email)
+  (users/user-set-pass! email password)
+  (sess/put! :email email)
+  (users/user-get email))
+
 (defn check-login [{:keys [email password]}]
   (if (some empty? [email password])
     (flash! "Both fields are required.  This really shouldn't be difficult.")
@@ -66,11 +73,7 @@
             (sess/put! :email email)
             user)
           (flash! "Invalid login!"))
-        (do
-          (users/user-set-email! email email)
-          (users/user-set-pass! email password)
-          (sess/put! :email email)
-          (users/user-get email))))))
+        (create-user email password)))))
 
 
 ; Home ------------------------------------------------------------------------
@@ -118,6 +121,7 @@
 (defpage [:post "/add"] {:keys [artist-id]}
          (login-required
            (users/user-add-show! (sess/get :email) artist-id)
+           (shows/show-add-to-checked! artist-id)
            (flash! "Added a show to your list.")
            (resp/redirect "/")))
 

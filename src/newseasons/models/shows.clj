@@ -16,6 +16,13 @@
 ;     image: url to show's image
 ;     url: url to view the show on iTunes
 ; }
+;
+; The shows we need to check are stored in two places for durability and ease of
+; use:
+;
+; shows:to-check = z#{<iTunes artist ID>, ...}
+; shows:to-check:queue = [<iTunes artist ID, ...]
+;              push to --^                      ^-- pop from
 
 ; Code ------------------------------------------------------------------------
 
@@ -42,4 +49,7 @@
 
 (defn show-set-url! [id new-url]
   @(r [:hset (key-show id) "url" new-url]))
+
+(defn show-add-to-checked! [id]
+  @(r [:sadd "shows:to-check" id]))
 
