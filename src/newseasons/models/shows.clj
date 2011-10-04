@@ -50,6 +50,10 @@
 (defn show-set-url! [id new-url]
   @(r [:hset (key-show id) "url" new-url]))
 
-(defn show-add-to-checked! [id]
+
+(defn show-add-to-check! [id]
   @(r [:sadd "shows:to-check" id]))
+
+(defn shows-get-to-check []
+  @(r [:smembers "shows:to-check"]))
 

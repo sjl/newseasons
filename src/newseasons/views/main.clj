@@ -121,7 +121,7 @@
 (defpage [:post "/add"] {:keys [artist-id]}
          (login-required
            (users/user-add-show! (sess/get :email) artist-id)
-           (shows/show-add-to-checked! artist-id)
+           (shows/show-add-to-check! artist-id)
            (flash! "Added a show to your list.")
            (resp/redirect "/")))
 

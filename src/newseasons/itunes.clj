@@ -1,5 +1,6 @@
 (ns newseasons.itunes
   (:require [clj-http.client :as client]) 
+  (:use newseasons.utils)
   (:use [cheshire.core :only (parse-string)]))
 
 
@@ -15,12 +16,16 @@
                   "attribute" "showTerm"}))
 
 
-(defn itunes-lookup [field id]
-  ((parse-string (:body (client/get "http://itunes.apple.com/search"
-                                    {:query-params {field id}})))
+(defn itunes-lookup [field id entity]
+  ((parse-string (:body (client/get "http://itunes.apple.com/lookup"
+                                    {:query-params {field id
+                                                    "entity" entity}})))
      "results"))
 
-(defn itunes-lookup-artist [id]
-  (first (itunes-lookup "id" id)))
+(defn itunes-lookup-seasons [id]
+  (let [results (itunes-lookup "id" id "tvSeason")]
+    (last (sort-maps-by (filter #(% "collectionName")
+                                results)
+                        "releaseDate"))))
 
 
