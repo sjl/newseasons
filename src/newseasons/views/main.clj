@@ -1,5 +1,6 @@
 (ns newseasons.views.main
   (:use noir.core)
+  (:use newseasons.utils)
   (:require [noir.response :as resp])
   (:require [noir.session :as sess])
   (:require [noir.util.crypt :as crypt])
@@ -45,10 +46,6 @@
 
 (defn unique-shows [seasons]
   (unique-by (sort-maps-by seasons "releaseDate") "artistId"))
-
-(defn sort-maps-by [coll k]
-  (sort #(compare (%1 k) (%2 k)) coll))
-
 
 ; iTunes ----------------------------------------------------------------------
 (defn itunes-search [params]

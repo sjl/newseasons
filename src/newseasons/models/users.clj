@@ -1,5 +1,6 @@
 (ns newseasons.models.users
   (:use newseasons.models.keys)
+  (:use newseasons.utils)
   (:use [newseasons.models.shows :only (show-get)])
   (:require [noir.util.crypt :as crypt])
   (:use [aleph.redis :only (redis-client)]))
@@ -26,7 +27,9 @@
   (let [user (apply hash-map @(r [:hgetall (key-user email)]))]
     (when (not (empty? user))
       (merge {:email (user "email") :pass (user "pass")}
-             {:shows (map show-get @(r [:smembers (key-user-shows email)]))}))))
+             {:shows (sort-maps-by (map show-get
+                                        @(r [:smembers (key-user-shows email)]))
+                                   :title)}))))
 
 (defn user-set-email! [email new-email]
   @(r [:hset (key-user email) "email" new-email]))

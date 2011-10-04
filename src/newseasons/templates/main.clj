@@ -22,7 +22,7 @@
 
 
 ; Layout ----------------------------------------------------------------------
-(defpartial base [& content]
+(defpartial base [body-class & content]
             (html5
               [:head
                (map include-css ["/css/base.css"
@@ -31,7 +31,7 @@
                (include-less "/css/style.less")
                (include-js "/js/less.js")
                [:title "New Seasons"]]
-              [:body
+              [:body {:class body-class}
                [:div.container.clearfix
                 [:header.sixteen.columns [:h1 (link-to "/" "New Seasons")]]
                 (when-let [message (sess/flash-get)]
@@ -46,8 +46,8 @@
                   (link-to "http://webnoir.org/" "Noir")
                   "."]]]]))
 
-(defpartial inner [title & content]
-            (base
+(defpartial inner [title body-class & content]
+            (base body-class
               [:h2.sixteen.columns.page-title
                [:div.profile
                 (form-to [:post "/logout"]
@@ -60,7 +60,7 @@
 
 ; Pages -----------------------------------------------------------------------
 (defpartial home []
-            (base
+            (base "home"
               [:div.six.columns
                [:form {:action "" :method "POST"}
                 (field text-field "email" "Email Address")
@@ -76,22 +76,22 @@
 
 (defpartial user-show [show]
             [:li.show.group
-             [:img {:src (show :image)}]
-             [:h3 (link-to (show :url) (show :title))]
-             [:p.latest "Latest season: " (show :latest)]
              (form-to [:post "/rem"]
                       [:input {:type "hidden" :name "artist-id" :value (show :id)}]
-                      (submit-button "Remove"))])
+                      (submit-button "Remove"))
+             [:img {:src (show :image)}]
+             [:h3 (link-to (show :url) (show :title))]
+             [:p.latest "Latest: " (show :latest)]])
 
 (defpartial user [user]
-            (inner (str "Hello, " (:email user))
-                   [:div.eight.columns
+            (inner (str "Hello, " (:email user)) "user"
+                   [:div.seven.columns
                     [:form {:action "/search"}
                      (field text-field
                             "query"
                             "Which show do you want to keep track of?")
                      (submit-button "Search")]]
-                   [:div.eight.columns
+                   [:div.nine.columns
                     (let [shows (:shows user)]
                       (if (empty? shows)
                         [:p "You're not currently watching any shows."]
@@ -109,19 +109,19 @@
             [:li.show.group
              [:img {:src (r "artworkUrl100")}]
              [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
-             [:p.latest "Latest season: " (r "collectionName")]
+             [:p.latest "Latest: " (r "collectionName")]
              (form-to [:post "/add"]
                       [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
                       (submit-button "Add Show to List"))])
 
 (defpartial search [query results]
-            (inner (str "Search results for &ldquo;" query "&rdquo;")
+            (inner (str "Search results for &ldquo;" query "&rdquo;") "search"
                    [:ul.sixteen.columns.search-results
                     (map result results)]))
 
 
 (defpartial password []
-            (inner "Change Your Password"
+            (inner "Change Your Password" "change-password"
                    [:section.sixteen.columns
                     (form-to [:post ""]
                              (field password-field "password" "New Password")
