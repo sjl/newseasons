@@ -6,3 +6,4 @@ lib/
 classes/
 .lein-failures
 .lein-deps-sum
+scratch.clj
