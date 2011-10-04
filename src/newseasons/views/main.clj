@@ -98,22 +98,10 @@
 
 
 ; Search ----------------------------------------------------------------------
-(defn store-show [show]
-  (let [id (show "artistId")]
-    (shows/show-set-id! id id)
-    (shows/show-set-title! id (show "artistName"))
-    (shows/show-set-latest! id (show "collectionName"))
-    (shows/show-set-image! id (show "artworkUrl100"))
-    (shows/show-set-url! id (show "artistViewUrl"))))
-
-(defn store-shows [seasons]
-  (dorun (map store-show seasons)))
-
-
 (defpage [:get "/search"] {:keys [query]}
          (login-required
            (let [results (unique-shows (itunes-search-show query))]
-             (store-shows (sort-maps-by results "releaseDate"))
+             (shows/store-raw-shows results)
              (t/search query results))))
 
 
@@ -121,6 +109,8 @@
 (defpage [:post "/add"] {:keys [artist-id]}
          (login-required
            (users/user-add-show! (sess/get :email) artist-id)
+           (shows/show-set-version-maybe! artist-id
+                                          (:release-date (shows/show-get artist-id)))
            (shows/show-add-to-check! artist-id)
            (flash! "Added a show to your list.")
            (resp/redirect "/")))
