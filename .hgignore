@@ -7,3 +7,4 @@ classes/
 .lein-failures
 .lein-deps-sum
 scratch.clj
+src/newseasons/settings.clj
