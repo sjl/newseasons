@@ -12,6 +12,7 @@
 ; shows:<iTunes artist ID> = {
 ;     id: show id
 ;     title: show tile
+;     latest: description of the latest season
 ;     image: url to show's image
 ;     url: url to view the show on iTunes
 ; }
@@ -24,6 +25,7 @@
       {:id (show "id")
        :title (show "title")
        :image (show "image")
+       :latest (show "latest")
        :url (show "url")})))
 
 (defn show-set-id! [id new-id]
@@ -31,6 +33,9 @@
 
 (defn show-set-title! [id new-title]
   @(r [:hset (key-show id) "title" new-title]))
+
+(defn show-set-latest! [id new-latest]
+  @(r [:hset (key-show id) "latest" new-latest]))
 
 (defn show-set-image! [id new-image]
   @(r [:hset (key-show id) "image" new-image]))

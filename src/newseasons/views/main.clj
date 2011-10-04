@@ -44,7 +44,7 @@
   (vals (reduce merge {} (map #(vector (select-keys % ks) %) coll))))
 
 (defn unique-shows [seasons]
-  (unique-by seasons "artistId"))
+  (unique-by (sort-maps-by seasons "releaseDate") "artistId"))
 
 (defn sort-maps-by [coll k]
   (sort #(compare (%1 k) (%2 k)) coll))
@@ -126,6 +126,7 @@
   (let [id (show "artistId")]
     (shows/show-set-id! id id)
     (shows/show-set-title! id (show "artistName"))
+    (shows/show-set-latest! id (show "collectionName"))
     (shows/show-set-image! id (show "artworkUrl100"))
     (shows/show-set-url! id (show "artistViewUrl"))))
 

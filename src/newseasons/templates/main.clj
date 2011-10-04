@@ -78,6 +78,7 @@
             [:li.show.group
              [:img {:src (show :image)}]
              [:h3 (link-to (show :url) (show :title))]
+             [:p.latest "Latest season: " (show :latest)]
              (form-to [:post "/rem"]
                       [:input {:type "hidden" :name "artist-id" :value (show :id)}]
                       (submit-button "Remove"))])
@@ -108,6 +109,7 @@
             [:li.show.group
              [:img {:src (r "artworkUrl100")}]
              [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
+             [:p.latest "Latest season: " (r "collectionName")]
              (form-to [:post "/add"]
                       [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
                       (submit-button "Add Show to List"))])
