@@ -7,7 +7,7 @@ TV shows hit iTunes.
 Requirements
 ------------
 
-[Vagrant](http://vagrantup.com/).
+* [Vagrant](http://vagrantup.com/)
 
 Usage
 -----
