@@ -5,9 +5,12 @@
 
 
 (defn itunes-search [params]
-  ((parse-string (:body (client/get "http://itunes.apple.com/search"
-                                    {:query-params params})))
-     "results"))
+  (try
+    ((parse-string (:body (client/get "http://itunes.apple.com/search"
+                                      {:query-params params})))
+       "results")
+    (catch java.lang.Exception e
+      (println "Failed request to " (:url (.data e))))))
 
 (defn itunes-search-show [query]
   (itunes-search {"term" query
@@ -17,10 +20,13 @@
 
 
 (defn itunes-lookup [field id entity]
-  ((parse-string (:body (client/get "http://itunes.apple.com/lookup"
-                                    {:query-params {field id
-                                                    "entity" entity}})))
-     "results"))
+  (try
+    ((parse-string (:body (client/get "http://itunes.apple.com/lookup"
+                                      {:query-params {field id
+                                                      "entity" entity}})))
+       "results")
+    (catch java.lang.Exception e
+      (println "Failed request to " (:url (.data e))))))
 
 (defn itunes-lookup-seasons [id]
   (let [results (itunes-lookup "id" id "tvSeason")]

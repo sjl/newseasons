@@ -47,7 +47,7 @@
     (Thread/sleep 10000)))
 
 (defn- refresh []
-  (println "")
+  (println "\n\n")
   (println "Refreshing Shows")
   (println "----------------")
   (Thread/sleep 20000)
