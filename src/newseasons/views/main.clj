@@ -100,9 +100,12 @@
 ; Search ----------------------------------------------------------------------
 (defpage [:get "/search"] {:keys [query]}
   (login-required
-    (let [results (unique-shows (itunes-search-show query))]
-      (shows/store-raw-shows results)
-      (t/search query results))))
+    (if (empty? query)
+      (do (flash! "Please enter something to search for.")
+        (resp/redirect "/")) 
+      (let [results (unique-shows (itunes-search-show query))]
+        (shows/store-raw-shows results)
+        (t/search query results)))))
 
 
 ; Add -------------------------------------------------------------------------
