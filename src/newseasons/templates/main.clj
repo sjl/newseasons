@@ -60,6 +60,9 @@
         (link-to "http://stevelosh.com/" "Steve Losh")
         " with "
         (link-to "http://webnoir.org/" "Noir")
+        ". "
+        "It&apos;s "
+        (link-to "http://github.com/sjl/newseasons" "open source")
         "."]]]
      ga]))
 
