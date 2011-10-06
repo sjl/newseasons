@@ -14,7 +14,7 @@
 (def email-regex #"[a-zA-Z0-9._+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}")
 (defn all-are [pred coll]
   (= (count coll)
-     (count (filter pred coll))))
+    (count (filter pred coll))))
 
 (defn flash! [message]
   (sess/flash-put! message)
@@ -28,16 +28,16 @@
 
   Ex:
 
-      (def a {:foo 1 :bar 1 :baz 1})
-      (def b {:foo 1 :bar 1 :baz 2})
-      (def c {:foo 1 :bar 2 :baz 3})
+  (def a {:foo 1 :bar 1 :baz 1})
+  (def b {:foo 1 :bar 1 :baz 2})
+  (def c {:foo 1 :bar 2 :baz 3})
 
-      (unique-by [a b c] :foo)
-      ;=> [c]
-      (unique-by [a b c] :foo :bar)
-      ;=> [b c]
-      (unique-by [a b c] :baz)
-      ;=> [a b c]
+  (unique-by [a b c] :foo)
+  ;=> [c]
+  (unique-by [a b c] :foo :bar)
+  ;=> [b c]
+  (unique-by [a b c] :baz)
+  ;=> [a b c]
   "
   [coll & ks]
   (vals (reduce merge {} (map #(vector (select-keys % ks) %) coll))))
@@ -78,74 +78,76 @@
 
 ; Home ------------------------------------------------------------------------
 (defpage [:get "/"] []
-         (if-let [email (sess/get :email)]
-           (resp/redirect (str "/" email))
-           (t/home)))
+  (if-let [email (sess/get :email)]
+    (resp/redirect (str "/" email))
+    (t/home)))
 
 (defpage [:post "/"] {:as login}
-         (if (check-login login)
-           (resp/redirect (str "/" (:email login)))
-           (render "/" login)))
+  (if (check-login login)
+    (resp/redirect (str "/" (:email login)))
+    (render "/" login)))
 
 
 ; User ------------------------------------------------------------------------
 (defpage [:get ["/:email" :email email-regex]] {:keys [email]}
-         (login-required
-           (if (not= email (sess/get :email))
-             (force-login)
-             (let [user (users/user-get email)]
-               (t/user user)))))
+  (login-required
+    (if (not= email (sess/get :email))
+      (force-login)
+      (let [user (users/user-get email)]
+        (t/user user)))))
 
 
 ; Search ----------------------------------------------------------------------
 (defpage [:get "/search"] {:keys [query]}
-         (login-required
-           (let [results (unique-shows (itunes-search-show query))]
-             (shows/store-raw-shows results)
-             (t/search query results))))
+  (login-required
+    (let [results (unique-shows (itunes-search-show query))]
+      (shows/store-raw-shows results)
+      (t/search query results))))
 
 
 ; Add -------------------------------------------------------------------------
 (defpage [:post "/add"] {:keys [artist-id]}
-         (login-required
-           (users/user-add-show! (sess/get :email) artist-id)
-           (shows/show-set-version-maybe! artist-id
-                                          (:release-date (shows/show-get artist-id)))
-           (shows/show-add-to-check! artist-id)
-           (flash! "Added a show to your list.")
-           (resp/redirect "/")))
+  (login-required
+    (users/user-add-show! (sess/get :email) artist-id)
+    (shows/show-add-to-check! artist-id) 
+    (let [show (shows/show-get artist-id)]
+    (shows/show-set-version-maybe! artist-id
+      (:release-date show)) 
+    (flash! (str "Added &ldquo;" (:title show) "&rdquo; to your list.  "
+                 "We'll email you if a new season hits iTunes."))) 
+    (resp/redirect "/")))
 
 
 ; Remove ----------------------------------------------------------------------
 (defpage [:post "/rem"] {:keys [artist-id]}
-         (login-required
-           (users/user-rem-show! (sess/get :email) artist-id)
-           (flash! "Removed a show from your list.")
-           (resp/redirect "/")))
+  (login-required
+    (users/user-rem-show! (sess/get :email) artist-id)
+    (flash! "Removed a show from your list.")
+    (resp/redirect "/")))
 
 
 ; Change Password -------------------------------------------------------------
 (defpage [:get "/password"] []
-         (login-required
-           (t/password)))
+  (login-required
+    (t/password)))
 
 
 (defn- pass-valid? [password]
   (not (empty? password)))
 
 (defpage [:post "/password"] {:keys [password]}
-         (login-required
-           (if-not (pass-valid? password)
-             (render "/password" password)
-             (do
-               (users/user-set-pass! (sess/get :email) password)
-               (resp/redirect "/")))))
+  (login-required
+    (if-not (pass-valid? password)
+      (render "/password" password)
+      (do
+        (users/user-set-pass! (sess/get :email) password)
+        (resp/redirect "/")))))
 
 
 ; Log Out ---------------------------------------------------------------------
 (defpage [:post "/logout"] []
-         (sess/remove! :email)
-         (resp/redirect "/"))
+  (sess/remove! :email)
+  (resp/redirect "/"))
 
 
 ; Delete Account --------------------------------------------------------------
@@ -157,5 +159,6 @@
   (login-required
     (users/user-delete! (sess/get :email))
     (sess/remove! :email)
+    (flash! "Your account has been deleted.  You can sign up again later if you want, though!")
     (resp/redirect "/")))
 

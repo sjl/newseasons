@@ -1,4 +1,5 @@
 (ns newseasons.loops.refresh
+  (:use [newseasons.settings :only (postmark-api-key)])
   (:require [newseasons.models.shows :as shows])
   (:require [newseasons.itunes :as itunes]))
 
@@ -45,6 +46,7 @@
   (println "")
   (println "Refreshing Shows")
   (println "----------------")
+  (Thread/sleep 20000)
 
   (let [shows (shows/shows-get-to-check)]
     (dorun (map refresh-show shows))))

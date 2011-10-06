@@ -68,7 +68,6 @@ footer {
     text-align: center;
     border-top: 2px solid #ddd;
     padding-top: 16px;
-    margin-top: 32px;
     font-style: italic;
     font-size: 15px;
     font-family: Palatino, Georgia, serif;
@@ -126,26 +125,35 @@ li.show {
 p.delete {
     text-align: center;
     color: #777;
-    margin-bottom: -18px;
     padding-top: 12px;
+    margin-bottom: 0;
+    padding-bottom: 12px;
     border-top: 2px solid #ddd;
 
     a {
         color: #555;
+
+        &:hover {
+            color: #222;
+        }
     }
 }
 
 // Pages
 .user {
-    li.show {
-        img {
-            width: 60px;
-            height: 60px;
-        }
-        form {
-            margin-top: 17px;
-            margin-bottom: 0;
-            float: right;
+    ul.shows {
+        margin-bottom: 32px;
+
+        li.show {
+            img {
+                width: 60px;
+                height: 60px;
+            }
+            form {
+                margin-top: 17px;
+                margin-bottom: 0;
+                float: right;
+            }
         }
     }
 }

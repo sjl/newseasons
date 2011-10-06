@@ -56,12 +56,13 @@
                              (submit-button "Change Password"))]
                    title]
                   content
+                  (when-not (= body-class "user")
+                    [:p.sixteen.columns (link-to "/" "&larr; Back to Dashboard")]) 
                   [:p.delete.sixteen.columns
                    "Don't want to receive any more notifications? "
                    "You can "
                    (link-to "/delete-account" "delete your account")
-                   "."]
-                  ))
+                   "."]))
 
 
 ; Pages -----------------------------------------------------------------------
@@ -108,7 +109,7 @@
                            " show"
                            (pluralize shows)
                            "."]
-                          [:ul (map user-show shows)])))]))
+                          [:ul.shows (map user-show shows)])))]))
 
 
 (defpartial result [r]
@@ -121,7 +122,12 @@
                       (submit-button "Add Show to List"))])
 
 (defpartial search [query results]
-            (inner (str "Search results for &ldquo;" query "&rdquo;") "search"
+            (inner (str (if (empty? results)
+                          "No"
+                          (count results))
+                        " Result" (pluralize results)
+                        " for &ldquo;" query "&rdquo;")
+                   "search"
                    [:ul.sixteen.columns.search-results
                     (map result results)]))
 

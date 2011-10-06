@@ -1,4 +1,5 @@
 (ns newseasons.models.users
+  (:use newseasons.settings)
   (:use newseasons.models.keys)
   (:use newseasons.utils)
   (:use [newseasons.models.shows :only (show-get)])
@@ -6,7 +7,7 @@
   (:use [aleph.redis :only (redis-client)]))
 
 
-(def r (redis-client {:host "localhost" :password "devpass"}))
+(def r (redis-client {:host "localhost" :password redis-pass}))
 
 ; "Schema" --------------------------------------------------------------------
 ;
