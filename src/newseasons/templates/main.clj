@@ -48,14 +48,20 @@
 
 (defpartial inner [title body-class & content]
             (base body-class
-              [:h2.sixteen.columns.page-title
-               [:div.profile
-                (form-to [:post "/logout"]
-                         (submit-button "Log Out"))
-                (form-to [:get "/password"]
-                         (submit-button "Change Password"))]
-               title]
-              content))
+                  [:h2.sixteen.columns.page-title
+                   [:div.profile
+                    (form-to [:post "/logout"]
+                             (submit-button "Log Out"))
+                    (form-to [:get "/password"]
+                             (submit-button "Change Password"))]
+                   title]
+                  content
+                  [:p.delete.sixteen.columns
+                   "Don't want to receive any more notifications? "
+                   "You can "
+                   (link-to "/delete-account" "delete your account")
+                   "."]
+                  ))
 
 
 ; Pages -----------------------------------------------------------------------
@@ -126,3 +132,10 @@
                     (form-to [:post ""]
                              (field password-field "password" "New Password")
                              (submit-button "Change Password"))]))
+
+(defpartial delete-account []
+            (inner "Delete Your Account" "delete-account"
+                   [:section.sixteen.columns
+                    [:p "If you're sure about this you can delete your account here."]
+                    (form-to [:post ""]
+                             (submit-button "Delete Account"))]))

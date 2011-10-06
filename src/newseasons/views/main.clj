@@ -146,3 +146,16 @@
 (defpage [:post "/logout"] []
          (sess/remove! :email)
          (resp/redirect "/"))
+
+
+; Delete Account --------------------------------------------------------------
+(defpage [:get "/delete-account"] []
+  (login-required
+    (t/delete-account)))
+
+(defpage [:post "/delete-account"] []
+  (login-required
+    (users/user-delete! (sess/get :email))
+    (sess/remove! :email)
+    (resp/redirect "/")))
+

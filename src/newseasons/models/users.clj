@@ -44,3 +44,12 @@
 (defn user-rem-show! [email show-id]
   @(r [:srem (key-user-shows email) show-id])
   @(r [:srem (key-show-watchers show-id) email]))
+
+
+(defn user-delete! [email]
+  @(r [:del (key-user email)])
+  @(r [:del (key-user-shows email)])
+  (let [shows @(r [:smembers "shows:to-check"])]
+    (dorun (map (fn [show-id]
+                  @(r [:srem (key-show-watchers show-id) email]))
+                shows))))

@@ -20,7 +20,7 @@
 ;
 ; The shows we need to check are stored in a set:
 ;
-; shows:to-check = z#{<iTunes artist ID>, ...}
+; shows:to-check = #{<iTunes artist ID>, ...}
 ;
 ; All current version IDs for shows are stored as a hash:
 ;

@@ -1,7 +1,6 @@
 (ns newseasons.loops.refresh
   (:require [newseasons.models.shows :as shows])
-  (:require [newseasons.itunes :as itunes])
-  )
+  (:require [newseasons.itunes :as itunes]))
 
 
 ; Dammit, Clojure.
