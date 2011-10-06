@@ -75,10 +75,9 @@
                 (submit-button "Log In or Create Account")]]
               [:div.five.columns
                [:p "New Seasons will notify you when your favorite TV "
-                   "shows have new seasons on iTunes.  That's it."]]
+                   "shows have new seasons on iTunes."]]
               [:div.five.columns
-               [:p "New Seasons will notify you when your favorite TV "
-                   "shows have new seasons on iTunes.  That's it."]]))
+               [:p "Add some shows to your list, we'll email you when new seasons come out.  That's it."]]))
 
 
 (defpartial user-show [show]
