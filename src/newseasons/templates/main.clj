@@ -6,7 +6,8 @@
     hiccup.form-helpers))
 
 
-(def ga "<script type=\"text/javascript\">
+(def ga "
+  <script type=\"text/javascript\">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-15328874-7']);
