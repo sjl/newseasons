@@ -1,25 +1,25 @@
 (ns newseasons.templates.main
   (:require [noir.session :as sess])
   (:use noir.core
-    hiccup.core
-    hiccup.page-helpers
-    hiccup.form-helpers))
+        hiccup.core
+        hiccup.page-helpers
+        hiccup.form-helpers))
 
 
 (def ga "
   <script type=\"text/javascript\">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-15328874-7']);
-  _gaq.push(['_trackPageview']);
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-15328874-7']);
+        _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
 
-</script>")
+  </script>")
 
 
 ; Utils -----------------------------------------------------------------------
@@ -68,21 +68,21 @@
 
 (defpartial inner [title body-class & content]
   (base body-class
-    [:h2.sixteen.columns.page-title
-     [:div.profile
-      (form-to [:post "/logout"]
-        (submit-button "Log Out"))
-      (form-to [:get "/password"]
-        (submit-button "Change Password"))]
-     title]
-    content
-    (when-not (= body-class "user")
-      [:p.sixteen.columns (link-to "/" "&larr; Back to Dashboard")]) 
-    [:p.delete.sixteen.columns
-     "Don't want to receive any more notifications? "
-     "You can "
-     (link-to "/delete-account" "delete your account")
-     "."]))
+        [:h2.sixteen.columns.page-title
+         [:div.profile
+          (form-to [:post "/logout"]
+                   (submit-button "Log Out"))
+          (form-to [:get "/password"]
+                   (submit-button "Change Password"))]
+         title]
+        content
+        (when-not (= body-class "user")
+          [:p.sixteen.columns (link-to "/" "&larr; Back to Dashboard")]) 
+        [:p.delete.sixteen.columns
+         "Don't want to receive any more notifications? "
+         "You can "
+         (link-to "/delete-account" "delete your account")
+         "."]))
 
 
 ; Pages -----------------------------------------------------------------------
@@ -103,8 +103,8 @@
 (defpartial user-show [show]
   [:li.show.group
    (form-to [:post "/rem"]
-     [:input {:type "hidden" :name "artist-id" :value (show :id)}]
-     (submit-button "Remove"))
+            [:input {:type "hidden" :name "artist-id" :value (show :id)}]
+            (submit-button "Remove"))
    [:img {:src (show :image)}]
    [:h3 (link-to (show :url) (show :title))]
    [:p.latest "Latest: " (show :latest)]])
@@ -137,8 +137,8 @@
    [:h3 (link-to (r "artistViewUrl") (r "artistName"))]
    [:p.latest "Latest: " (r "collectionName")]
    (form-to [:post "/add"]
-     [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
-     (submit-button "Add Show to List"))])
+            [:input {:type "hidden" :name "artist-id" :value (r "artistId")}]
+            (submit-button "Add Show to List"))])
 
 (defpartial search [query results]
   (inner (str (if (empty? results)
@@ -153,14 +153,14 @@
 
 (defpartial password []
   (inner "Change Your Password" "change-password"
-    [:section.sixteen.columns
-     (form-to [:post ""]
-       (field password-field "password" "New Password")
-       (submit-button "Change Password"))]))
+         [:section.sixteen.columns
+          (form-to [:post ""]
+                   (field password-field "password" "New Password")
+                   (submit-button "Change Password"))]))
 
 (defpartial delete-account []
   (inner "Delete Your Account" "delete-account"
-    [:section.sixteen.columns
-     [:p "If you're sure about this you can delete your account here."]
-     (form-to [:post ""]
-       (submit-button "Delete Account"))]))
+         [:section.sixteen.columns
+          [:p "If you're sure about this you can delete your account here."]
+          (form-to [:post ""]
+                   (submit-button "Delete Account"))]))
