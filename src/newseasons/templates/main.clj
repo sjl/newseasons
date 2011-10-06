@@ -89,10 +89,10 @@
 (defpartial home []
   (base "home"
         [:div.six.columns
-         [:form {:action "" :method "POST"}
-          (field text-field "email" "Email Address")
-          (field password-field "password" "Password")
-          (submit-button "Log In or Create Account")]]
+         (form-to [:post ""]
+                  (field text-field "email" "Email Address")
+                  (field password-field "password" "Password")
+                  (submit-button "Log In or Create Account"))]
         [:div.five.columns
          [:p "New Seasons will notify you when your favorite TV "
           "shows have new seasons on iTunes."]]
@@ -111,24 +111,24 @@
 
 (defpartial user [user]
   (inner (str "Hello, " (:email user)) "user"
-    [:div.seven.columns
-     [:form {:action "/search"}
-      (field text-field
-        "query"
-        "Which show do you want to keep track of?")
-      (submit-button "Search")]]
-    [:div.nine.columns
-     (let [shows (:shows user)]
-       (if (empty? shows)
-         [:p "You're not currently watching any shows."]
-         (list
-           [:p
-            "You're watching "
-            (count shows)
-            " show"
-            (pluralize shows)
-            "."]
-           [:ul.shows (map user-show shows)])))]))
+         [:div.seven.columns
+          (form-to [:get "search"]
+                   (field text-field
+                          "query"
+                          "Which show do you want to keep track of?")
+                   (submit-button "Search"))]
+         [:div.nine.columns
+          (let [shows (:shows user)]
+            (if (empty? shows)
+              [:p "You're not currently watching any shows."]
+              (list
+                [:p
+                 "You're watching "
+                 (count shows)
+                 " show"
+                 (pluralize shows)
+                 "."]
+                [:ul.shows (map user-show shows)])))]))
 
 
 (defpartial result [r]
