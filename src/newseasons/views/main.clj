@@ -45,6 +45,7 @@
 (defn unique-shows [seasons]
   (unique-by (sort-maps-by seasons "releaseDate") "artistId"))
 
+
 ; Authentication --------------------------------------------------------------
 (defn force-login []
   (flash! "Please log in to view that page!")
@@ -77,7 +78,7 @@
 
 
 ; Home ------------------------------------------------------------------------
-(defpage [:get "/"] []
+(defpage "/" []
   (if-let [email (sess/get :email)]
     (resp/redirect (str "/" email))
     (t/home)))
@@ -98,7 +99,7 @@
 
 
 ; Search ----------------------------------------------------------------------
-(defpage [:get "/search"] {:keys [query]}
+(defpage "/search" {:keys [query]}
   (login-required
     (if (empty? query)
       (do (flash! "Please enter something to search for.")
@@ -130,7 +131,7 @@
 
 
 ; Change Password -------------------------------------------------------------
-(defpage [:get "/password"] []
+(defpage "/password" []
   (login-required
     (t/password)))
 
@@ -154,7 +155,7 @@
 
 
 ; Delete Account --------------------------------------------------------------
-(defpage [:get "/delete-account"] []
+(defpage "/delete-account" []
   (login-required
     (t/delete-account)))
 
