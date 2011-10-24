@@ -42,8 +42,8 @@
   (println "  refreshing" id)
   (let [show (itunes/itunes-lookup-seasons id)]
     (when show
-      (check-and-notify show)
-      (shows/store-raw-show show))
+      (shows/store-raw-show show)
+      (check-and-notify show))
     (Thread/sleep 10000)))
 
 (defn- refresh []
