@@ -21,6 +21,21 @@
 
   </script>")
 
+(def gauges "
+  <script type='text/javascript'>
+      var _gauges = _gauges || [];
+      (function() {
+        var t   = document.createElement('script');
+        t.type  = 'text/javascript';
+        t.async = true;
+        t.id    = 'gauges-tracker';
+        t.setAttribute('data-site-id', '4ea612e7613f5d4208000001');
+        t.src = '//secure.gaug.es/track.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(t, s);
+      })();
+  </script>")
+
 
 ; Utils -----------------------------------------------------------------------
 (defn include-less [href]
@@ -64,7 +79,8 @@
         "It&apos;s "
         (link-to "http://github.com/sjl/newseasons" "open source")
         "."]]]
-     ga]))
+     ga
+     gauges]))
 
 (defpartial inner [title body-class & content]
   (base body-class
