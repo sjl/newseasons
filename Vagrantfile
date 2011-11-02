@@ -5,7 +5,7 @@ Vagrant::Config.run do |config|
 
   #                               guest <-- host
   config.vm.forward_port "http",  8000,     4565
-  config.vm.forward_port "swank", 4005,     4005
+  config.vm.network("33.33.33.10")
 
   config.vm.provision :puppet do |puppet|
     puppet.manifest_file  = "base.pp"
